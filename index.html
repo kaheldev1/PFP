@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Public Feedback Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container" id="loginPage">
-        
-        <img src="IMG\logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
+        <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
         <h2>Welcome!</h2>
         <form id="loginForm">
             <input type="text" id="username" placeholder="Username" required>
@@ -17,22 +17,30 @@
         </form>
         <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
         <p><a href="#" onclick="showAdminLogin()">Admin Login</a></p>
+        <footer class="main-footer">
+            <p>Developed by <a href="https://github.com/kaheldev" target="_blank">kaheldev</a></p>
+        </footer>
     </div>
 
     <div class="container hidden" id="registerPage">
-        
         <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
         <h2>Register</h2>
         <form id="registerForm">
-            <input type="text" id="regUsername" placeholder="Username" required>
-            <input type="password" id="regPassword" placeholder="Password" required>
-            <button type="submit">Register</button>
+        <input type="text" id="regUsername" placeholder="Username" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <select id="regGender" required>
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+        <input type="password" id="regPassword" placeholder="Password" required>
+        <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+        <button type="submit">Register</button>
         </form>
         <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
-    </div>
+        </div>
 
     <div class="container hidden" id="adminLoginPage">
-        
         <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
         <h2>Admin Access</h2>
         <form id="adminLoginForm">
@@ -92,8 +100,6 @@
             </main>
         </div>
     </div>
-
-
     <script src="script.js"></script>
 </body>
 </html>
