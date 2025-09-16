@@ -8,7 +8,7 @@ const STORAGE_ADMIN_LOGGED_IN = "adminLoggedIn";
 let users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || [];
 let issues = JSON.parse(localStorage.getItem(STORAGE_ISSUES)) || [];
 let currentUser = localStorage.getItem(STORAGE_CURRENT_USER) || null;
-let isAdmin = localStorage.getItem("userRole") === "admin"; // Check for admin role
+let isAdmin = localStorage.getItem("userRole") === "admin";
 
 
 const loginPage = document.getElementById("loginPage");
