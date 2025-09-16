@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Feedback Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="loginPage">
+        <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
+        <h2>Public Feedback Portal</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
+        <p><a href="#" onclick="showAdminLogin()">Admin Login</a></p>
+        <footer class="main-footer">
+            <p>Developed by <a href="https://www.facebook.com/kaheldev" target="_blank">kaheldev</a></p>
+        </footer>
+    </div>
+
+    <div class="container hidden" id="registerPage">
+        <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
+        <h2>Register</h2>
+        <form id="registerForm">
+        <input type="text" id="regUsername" placeholder="Username" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <select id="regGender" required>
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+        <input type="password" id="regPassword" placeholder="Password" required>
+        <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+        <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+        </div>
+
+    <div class="container hidden" id="adminLoginPage">
+        <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
+        <h2>Admin Access</h2>
+        <form id="adminLoginForm">
+            <input type="text" id="adminUsername" placeholder=" Username" required>
+            <input type="password" id="adminPassword" placeholder=" Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p><a href="#" onclick="showLogin()">Back to User Login</a></p>
+    </div>
+
+    <div class="main-content hidden" id="dashboardPage">
+        <header class="dashboard-header">
+            <h2>Public Feedback Portal</h2>
+            <p>Welcome, <span id="currentUser"></span>!</p>
+            <button onclick="logout()" class="btn-secondary">Logout</button>
+        </header>
+
+        <section class="submit-issue-section">
+            <h3>Submit Your Feedback</h3>
+            <form id="issueForm">
+                <input type="text" id="issueTitle" placeholder="Title" required>
+                <textarea id="issueDesc" placeholder="Detailed description" rows="4" required></textarea>
+                <input type="file" id="issueImage" accept="image/*">
+                <button type="submit">Submit Issue</button>
+            </form>
+        </section>
+
+        <section class="my-issues-section">
+            <h3>My Reported Issues</h3>
+            <div id="issuesList" class="issue-grid"></div>
+        </section>
+    </div>
+
+    <div class="main-content hidden" id="adminDashboardPage">
+        <header class="dashboard-header">
+            <h2>Admin Dashboard</h2>
+            <p>Welcome, Admin!</p>
+            <button id="adminLogout" class="btn-secondary">Logout</button>
+        </header>
+
+        <div class="filters-and-issues">
+            <aside class="sidebar">
+                <h3>Filters</h3>
+                <div class="filters-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter">
+                        <option value="all">All Issues</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+            </aside>
+            <main class="admin-main-content">
+                <h3 class="card-title">All Reported Issues</h3>
+                <div id="adminIssuesList" class="issue-grid"></div>
+            </main>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
