@@ -276,17 +276,33 @@ a:hover {
     border-radius: 12px;
     box-shadow: 0 4px 12px var(--shadow-color);
 }
+
 .admin-controls {
     margin-top: 15px;
     display: flex;
-    gap: 10px;
+    justify-content: space-between;
     align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.admin-controls label {
+    font-weight: 500;
+    color: var(--text-light);
+    margin-right: 8px;
 }
 .admin-controls select {
-    width: auto;
-    min-width: 150px;
+    flex: 1;
+    min-width: 160px;
     background-color: var(--input-bg);
     color: var(--text-dark);
+    border-radius: 6px;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+}
+.admin-controls .btn-danger {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    font-size: 14px;
 }
 
 .barangay-logo {
@@ -317,23 +333,40 @@ a:hover {
     font-size: 0.9rem;
     z-index: 99;
 }
-.main-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    padding: 5px 0; 
-    background-color: var(--card-bg);
-    border-top: 1px solid var(--border-color);
-    color: var(--text-light);
-    font-size: 0.8rem; 
-    z-index: 99;
-}
-
 .main-footer a {
     color: var(--primary-color);
     text-decoration: none;
+}
+
+.chat-box {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 8px;
+    background: #1f242d;
+    margin-bottom: 10px;
+}
+.chat-message {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+.chat-user {
+    text-align: right;
+    color: #00adb5;
+}
+.chat-admin {
+    text-align: left;
+    color: #f1c40f;
+}
+.chat-input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-dark);
 }
 
 @media (max-width: 768px) {
@@ -361,3 +394,34 @@ a:hover {
         padding-bottom: 70px;
     }
 }
+#searchIssues {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-dark);
+    margin-top: 8px;
+}
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.btn-group .btn-full {
+    border-radius: 0;
+    margin: 0;
+}
+
+.btn-group .btn-full:first-child {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.btn-group .btn-full:last-child {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+
