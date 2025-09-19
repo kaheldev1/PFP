@@ -19,13 +19,13 @@ const issueForm = document.getElementById("issueForm");
 const issueTitleInput = document.getElementById("issueTitle");
 const issueDescInput = document.getElementById("issueDesc");
 const issueImageInput = document.getElementById("issueImage");
+const issueCategoryInput = document.getElementById("issueCategory"); 
 
 const adminIssuesList = document.getElementById("adminIssuesList");
 const statusFilter = document.getElementById("statusFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+const searchIssuesInput = document.getElementById("searchIssues");
 const adminLogoutBtn = document.getElementById("adminLogout");
-
-const followUpNotification = document.getElementById("followUpNotification");
-const followUpDropdown = document.getElementById("followUpDropdown");
 
 adminLogoutBtn.addEventListener("click", logout);
 
@@ -35,7 +35,6 @@ const ADMIN_PASS = "admin123";
 function generateTrackingNumber() {
     return "PID-" + Date.now().toString().slice(-6);
 }
-
 
 function showLogin() {
     loginPage.classList.remove("hidden");
@@ -84,7 +83,6 @@ function showAdminDashboard() {
     dashboardPage.classList.add("hidden");
     adminDashboardPage.classList.remove("hidden");
     loadAllIssues();
-    updateFollowUpNotification();
 }
 
 document.getElementById("registerForm").addEventListener("submit", e => {
@@ -153,6 +151,7 @@ issueForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const title = issueTitleInput.value;
     const desc = issueDescInput.value;
+    const category = issueCategoryInput.value; 
     const imageFile = issueImageInput.files[0];
 
     let imageUrl = null;
@@ -167,10 +166,11 @@ issueForm.addEventListener("submit", async (e) => {
         user: currentUser,
         title,
         desc,
+        category,
         status: "Pending",
         image: imageUrl,
         timestamp: new Date().toISOString(),
-        followUps: []
+        messages: []
     });
 
     localStorage.setItem(STORAGE_ISSUES, JSON.stringify(issues));
@@ -194,27 +194,33 @@ function loadUserIssues() {
         div.classList.add("issue-card");
 
         let imageHtml = issue.image ? `<img src="${issue.image}" alt="Issue Image">` : '';
-        let followUpsHtml = issue.followUps.map(f => `<p class="followup"> ${f.text} <small>(${new Date(f.timestamp).toLocaleString()})</small></p>`).join("");
+        let chatHtml = issue.messages.map(m => `
+            <div class="chat-message ${m.sender === currentUser ? 'chat-user' : 'chat-admin'}">
+                <strong>${m.sender}:</strong> ${m.text} <br>
+                <small>${new Date(m.timestamp).toLocaleString()}</small>
+            </div>
+        `).join("");
 
         div.innerHTML = `
             ${imageHtml}
             <h4>${issue.title} <small>[${issue.id}]</small></h4>
+            <p><strong>Category:</strong> ${issue.category}</p>
             <p>${issue.desc}</p>
             <p>Status: <span class="status-badge status-${issue.status.replace(/\s/g, '')}">${issue.status}</span></p>
-            <div class="followups">${followUpsHtml}</div>
-            <textarea placeholder="Add follow-up..." class="followup-input"></textarea>
-            <button class="btn-followup" data-id="${issue.id}">Send Follow-up</button>
+            <div class="chat-box">${chatHtml || "<p>No messages yet.</p>"}</div>
+            <textarea placeholder="Type a message..." class="chat-input"></textarea>
+            <button class="btn-chat" data-id="${issue.id}">Send</button>
         `;
         issuesList.appendChild(div);
     });
 
-    document.querySelectorAll(".btn-followup").forEach(btn => {
+    document.querySelectorAll(".btn-chat").forEach(btn => {
         btn.addEventListener("click", (e) => {
             const issueId = e.target.dataset.id;
             const input = e.target.previousElementSibling;
             const text = input.value.trim();
             if (text) {
-                addFollowUp(issueId, text);
+                sendMessage(issueId, text, currentUser);
                 input.value = "";
             }
         });
@@ -224,10 +230,18 @@ function loadUserIssues() {
 function loadAllIssues() {
     adminIssuesList.innerHTML = "";
     const filterStatus = statusFilter.value;
-    const filteredIssues = issues.filter(issue => filterStatus === "all" || issue.status === filterStatus);
+    const filterCategory = categoryFilter.value;
+    const searchQuery = searchIssuesInput.value.toLowerCase();
+
+    const filteredIssues = issues.filter(issue => {
+        const matchStatus = filterStatus === "all" || issue.status === filterStatus;
+        const matchCategory = filterCategory === "all" || issue.category === filterCategory;
+        const matchSearch = issue.id.toLowerCase().includes(searchQuery);
+        return matchStatus && matchCategory && matchSearch;
+    });
 
     if (filteredIssues.length === 0) {
-        adminIssuesList.innerHTML = "<p>No issues found.</p>";
+        adminIssuesList.innerHTML ="<p>No issues found.</p>";
         return;
     }
 
@@ -237,19 +251,26 @@ function loadAllIssues() {
 
         const formattedDate = new Date(issue.timestamp).toLocaleString();
         let imageHtml = issue.image ? `<img src="${issue.image}" alt="Issue Image">` : '';
-        let followUpsHtml = issue.followUps.map(f => `<li> ${f.text} <small>(${new Date(f.timestamp).toLocaleString()})</small></li>`).join("");
+        let chatHtml = issue.messages.map(m => `
+            <div class="chat-message ${m.sender === "Admin" ? 'chat-admin' : 'chat-user'}">
+                <strong>${m.sender}:</strong> ${m.text} <br>
+                <small>${new Date(m.timestamp).toLocaleString()}</small>
+            </div>
+        `).join("");
 
         issueCard.innerHTML = `
             ${imageHtml}
             <h4>${issue.title} <small>[${issue.id}]</small></h4>
+            <p><strong>Category:</strong> ${issue.category}</p>
             <p><strong>Submitted by:</strong> ${issue.user}</p>
             <p><strong>Date:</strong> ${formattedDate}</p>
             <p>${issue.desc}</p>
             <p><strong>Status:</strong> 
                 <span class="status-badge status-${issue.status.replace(/\s/g, '')}">${issue.status}</span>
             </p>
-            <p><strong>Follow-ups:</strong></p>
-            <ul>${followUpsHtml || "<li>No follow-ups yet.</li>"}</ul>
+            <div class="chat-box">${chatHtml || "<p>No messages yet.</p>"}</div>
+            <textarea placeholder="Type a reply..." class="chat-input"></textarea>
+            <button class="btn-chat" data-id="${issue.id}">Reply</button>
             <div class="admin-controls">
                 <label>Update Status:</label>
                 <select class="status-select" data-id="${issue.id}">
@@ -261,6 +282,18 @@ function loadAllIssues() {
             </div>
         `;
         adminIssuesList.appendChild(issueCard);
+    });
+
+    document.querySelectorAll(".btn-chat").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const issueId = e.target.dataset.id;
+            const input = e.target.previousElementSibling;
+            const text = input.value.trim();
+            if (text) {
+                sendMessage(issueId, text, "Admin");
+                input.value = "";
+            }
+        });
     });
 
     document.querySelectorAll(".status-select").forEach(select => {
@@ -278,26 +311,20 @@ function loadAllIssues() {
     });
 }
 
-function addFollowUp(issueId, text) {
+function sendMessage(issueId, text, sender) {
     issues = issues.map(issue => {
         if (issue.id === issueId) {
-            issue.followUps.push({ text, timestamp: new Date().toISOString() });
+            issue.messages.push({
+                sender,
+                text,
+                timestamp: new Date().toISOString()
+            });
         }
         return issue;
     });
     localStorage.setItem(STORAGE_ISSUES, JSON.stringify(issues));
     loadUserIssues();
     if (isAdmin) loadAllIssues();
-    updateFollowUpNotification();
-}
-
-function updateFollowUpNotification() {
-    if (!followUpNotification) return;
-    let totalFollowUps = issues.reduce((acc, issue) => acc + issue.followUps.length, 0);
-    followUpNotification.textContent = totalFollowUps;
-    followUpDropdown.innerHTML = issues.flatMap(issue =>
-        issue.followUps.map(f => `<li><strong>${issue.id}</strong>: ${f.text} (${new Date(f.timestamp).toLocaleString()})</li>`)
-    ).join("");
 }
 
 function updateIssueStatus(issueId, newStatus) {
@@ -343,6 +370,34 @@ function logout() {
     showLogin();
 }
 
+function deleteAllUsers() {
+    if (confirm("Are you sure you want to delete All registered users?")) {
+        localStorage.removeItem(STORAGE_USERS);
+        users = [];
+        alert("All registered users have been deleted.");
+    }
+}
+
+document.getElementById("exportCSV")?.addEventListener("click", () => {
+    if (issues.length === 0) {
+        alert("No issues to export!");
+        return;
+    }
+
+    let csv = "Tracking ID,Title,Description,Category,Status,User,Date\n";
+    issues.forEach(issue => {
+        csv += `"${issue.id}","${issue.title}","${issue.desc}","${issue.category}","${issue.status}","${issue.user}","${new Date(issue.timestamp).toLocaleString()}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "issues.csv";
+    link.click();
+});
+
+document.getElementById("deleteUsers")?.addEventListener("click", deleteAllUsers);
+
 document.addEventListener("DOMContentLoaded", () => {
     const adminLoggedIn = localStorage.getItem(STORAGE_ADMIN_LOGGED_IN) === "true";
     const userRole = localStorage.getItem("userRole");
@@ -357,5 +412,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         showLogin();
     }
-});
 
+    statusFilter?.addEventListener("change", loadAllIssues);
+    categoryFilter?.addEventListener("change", loadAllIssues);
+    searchIssuesInput?.addEventListener("input", loadAllIssues);
+});
