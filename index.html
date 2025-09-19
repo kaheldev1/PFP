@@ -23,22 +23,21 @@
     </div>
 
     <div class="container hidden" id="registerPage">
-        <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
         <h2>Register</h2>
         <form id="registerForm">
-        <input type="text" id="regUsername" placeholder="Username" required>
-        <input type="email" id="regEmail" placeholder="Email" required>
-        <select id="regGender" required>
-            <option value="" disabled selected>Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-        </select>
-        <input type="password" id="regPassword" placeholder="Password" required>
-        <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
-        <button type="submit">Register</button>
+            <input type="text" id="regUsername" placeholder="Username" required>
+            <input type="email" id="regEmail" placeholder="Email" required>
+            <select id="regGender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <input type="password" id="regPassword" placeholder="Password" required>
+            <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+            <button type="submit">Register</button>
         </form>
         <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
-        </div>
+    </div>
 
     <div class="container hidden" id="adminLoginPage">
         <img src="IMG/logo1-removebg-preview.png" alt="Barangay 184 Logo" class="barangay-logo">
@@ -62,6 +61,13 @@
             <h3>Submit Your Feedback</h3>
             <form id="issueForm">
                 <input type="text" id="issueTitle" placeholder="Title" required>
+                <select id="issueCategory" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Road">Road</option>
+                    <option value="Garbage">Garbage</option>
+                    <option value="Safety">Safety</option>
+                    <option value="Other">Other</option>
+                </select>
                 <textarea id="issueDesc" placeholder="Detailed description" rows="4" required></textarea>
                 <input type="file" id="issueImage" accept="image/*">
                 <button type="submit">Submit Issue</button>
@@ -93,6 +99,26 @@
                         <option value="Resolved">Resolved</option>
                     </select>
                 </div>
+                <div class="filters-group">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="Road">Road</option>
+                        <option value="Garbage">Garbage</option>
+                        <option value="Safety">Safety</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="filters-group">
+                    <label for="searchIssues">Search for Tracking Number</label>
+                    <input type="text" id="searchIssues" placeholder="Search">
+                </div>
+                <div class="btn-group">
+                <button id="exportCSV" class="btn-primary btn-full">Export Issues (CSV)</button>
+                <button id="deleteUsers" class="btn-danger btn-full">Delete All Users</button>
+                </div>
+
+
             </aside>
             <main class="admin-main-content">
                 <h3 class="card-title">All Reported Issues</h3>
